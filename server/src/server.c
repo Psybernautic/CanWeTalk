@@ -170,17 +170,33 @@ void send_to_all(char *message, int sender_socket_fd) {
         direction = '>';
     }
 
-    char formatted_message[MESSAGE_SIZE];
-    snprintf(formatted_message, MESSAGE_SIZE, "%-15s_[%5s]_ %c%c %-*.*s (%s)\n", ip_address, clients[client_index].user_id, direction, direction, MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, message, timestamp);
+    int message_len = strlen(message);
+    char *formatted_message = malloc(MESSAGE_SIZE);
+    int start = 0;
 
-    for (int i = 0; i < client_count; i++) {
-        if (clients[i].socket_fd != sender_socket_fd) {
-            send(clients[i].socket_fd, formatted_message, strlen(formatted_message), 0);
+    while (start < message_len) {
+        int end = start + MAX_MESSAGE_LEN;
+        if (end > message_len) {
+            end = message_len;
         }
+        int len = end - start;
+        char temp[len + 1];
+        strncpy(temp, message + start, len);
+        temp[len] = '\0';
+        snprintf(formatted_message, MESSAGE_SIZE, "%-15s_[%5s]_ %c%c %-*.*s (%s)\n", ip_address, clients[client_index].user_id, direction, direction, MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp);
+        for (int i = 0; i < client_count; i++) {
+            if (clients[i].socket_fd != sender_socket_fd) {
+                send(clients[i].socket_fd, formatted_message, strlen(formatted_message), 0);
+            }
+        }
+        printf("%s", formatted_message);
+        start = end;
+        usleep(1000); // 1ms delay between sending parts
     }
 
-    printf("%s", formatted_message);
+    free(formatted_message);
 }
+
 
 
 int find_client_index(int socket_fd) {
