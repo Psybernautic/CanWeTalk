@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define MESSAGE_SIZE 80
+#define MESSAGE_SIZE 2000
 #define BUFFER_SIZE 256
 #define PORT 8080
 
