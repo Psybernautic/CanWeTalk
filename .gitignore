@@ -1,0 +1,4 @@
+*.o
+client/bin/*
+program/bin/*
+server/bin/*
