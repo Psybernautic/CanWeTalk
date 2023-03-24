@@ -1,27 +1,15 @@
-CC = gcc
-CFLAGS = -Wall
-LIBS = -lpthread -lncurses
 
-SRC_DIR = src
-INC_DIR = inc
-OBJ_DIR = obj
-BIN_DIR = bin
+./bin/client: ./obj/client.o ./obj/winControl.o
+	cc ./obj/client.o ./obj/winControl.o -lpthread -lncurses -o ./bin/client
 
-_OBJ = client.o
-OBJ = $(patsubst %,$(OBJ_DIR)/%,$(_OBJ))
+./obj/client.o: ./src/client.c ./inc/winControl.h
+	cc -c ./src/client.c -o ./obj/client.o
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $<
+./obj/winControl.o: ./src/winControl.c ./inc/winControl.h
+	cc -c ./src/winControl.c -o ./obj/winControl.o
 
-$(BIN_DIR)/client: $(OBJ) | $(BIN_DIR)
-	$(CC) -o $@ $^ $(LIBS)
+all: ./bin/client
 
-$(OBJ_DIR) $(BIN_DIR):
-	mkdir -p $@
-
-.PHONY: all
-all: $(BIN_DIR)/client
-
-.PHONY: clean
 clean:
-	rm -f $(OBJ_DIR)/*.o $(BIN_DIR)/client
+	rm -f ./bin/*
+	rm -f ./obj/*.o

@@ -1,6 +1,5 @@
 #include <arpa/inet.h>
 #include <errno.h>
-#include <ncurses.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <pthread.h>
@@ -11,11 +10,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "../inc/winControl.h"
+
 #define MESSAGE_SIZE 2000
 #define BUFFER_SIZE 256
 #define PORT 8080
 
 void *receive_messages(void *arg);
+WINDOW *msgs_window;
 
 
 int main(int argc, char *argv[]) {
@@ -24,7 +26,6 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in serv_addr;
     char *user_id = NULL;
     char *server_name = NULL;
-    
 
     // Parse command line arguments
     for (int i = 1; i < argc; i++) {
@@ -41,16 +42,17 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    memset(&serv_addr, '0', sizeof(serv_addr));
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
+
+
     // Create socket
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket");
         return 1;
     }
-
-    memset(&serv_addr, '0', sizeof(serv_addr));
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
 
     // Convert server name or IP address to binary form
     if (inet_pton(AF_INET, server_name, &serv_addr.sin_addr) <= 0) {
@@ -67,7 +69,35 @@ int main(int argc, char *argv[]) {
     // Send user ID
     send(sock, user_id, strlen(user_id), 0);
 
-    
+    /* Declaring the window */
+    WINDOW *chat_window;
+
+    /* Starting the ncurses mode */
+    initscr();
+    cbreak();
+    noecho();
+    refresh();
+
+    int shouldBlank = 0;
+
+    int chat_height = 5;
+    int chat_width  = COLS - 2;
+    int chat_startx = 1;
+    int chat_starty = LINES - chat_height;
+        
+    int msg_height = LINES - chat_height - 1;
+    int msg_width  = COLS;
+    int msg_startx = 0;
+    int msg_starty = 0;
+
+    /* create the input window */
+    msgs_window = create_a_window(msg_height, msg_width, msg_starty, msg_startx);
+    scrollok(msgs_window, TRUE);
+
+    /* create the output window */
+    chat_window = create_a_window(chat_height, chat_width, chat_starty, chat_startx);
+    scrollok(chat_window, TRUE);
+
 
     // Start message receiving thread
     pthread_t receive_thread;
@@ -79,20 +109,23 @@ int main(int argc, char *argv[]) {
 
     while (1) 
     {
+        /*
         printf("%s> ", user_id);
         fflush(stdout);
         fgets(message, MESSAGE_SIZE, stdin);
-        
+        */
         // Replace new line character with null terminator
+        input_window(chat_window, message, user_id);
+
         int len = strlen(message);
         if (len > 0 && message[len - 1] == '\n')
-         {
+        {
             message[len - 1] = '\0';
-            
-         }
+        }
 
         // Check for exit message
-        if (strcmp(message, ">>bye<<") == 0) {
+        if (strcmp(message, ">>bye<<") == 0) 
+        {
             send(sock,message,strlen(message),0);
             break;
         }
@@ -104,26 +137,31 @@ int main(int argc, char *argv[]) {
     }
 
     close(sock);
+    destroy_window(chat_window);
+    destroy_window(msgs_window);
     return 0;
     
 }
 
 
 
-void *receive_messages(void *arg) {
+void *receive_messages(void *arg)
+{
     int sock = *(int *)arg;
     char buffer[BUFFER_SIZE +1];
     ssize_t message_len;
+    char toPromp[MESSAGE_SIZE];
 
-
-
-    while ((message_len = recv(sock, buffer, MESSAGE_SIZE, 0)) > 0) {
+    while ((message_len = recv(sock, buffer, MESSAGE_SIZE, 0)) > 0)
+    {
         buffer[message_len] = '\0';
 
         // Display received message
-        printf("%s", buffer);
+        //printf("%s", buffer);
+        strcat(toPromp, buffer);
         fflush(stdout);
     }
+    display_window(msgs_window, toPromp, 0, 0);
 
     return NULL;
 }
