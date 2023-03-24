@@ -31,7 +31,7 @@ void input_window(WINDOW *window, char *input, char *user)
 
 	clear_window(window);					// Make it clean
 	getmaxyx(window, maxRow, maxCol);		// Getting the window size
-	bzero(input, BUFSIZ);
+	memset(input, 0, sizeof(input));
 	wmove(window, 1, 1);
 
 	wprintw(window, "%s", user);

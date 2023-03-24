@@ -126,6 +126,9 @@ int main(int argc, char *argv[]) {
         if (strcmp(message, ">>bye<<") == 0) 
         {
             send(sock,message,strlen(message),0);
+            destroy_window(chat_window);
+            destroy_window(msgs_window);
+            endwin();
             break;
         }
 
@@ -136,8 +139,6 @@ int main(int argc, char *argv[]) {
     }
 
     close(sock);
-    destroy_window(chat_window);
-    destroy_window(msgs_window);
     return 0;
     
 }
