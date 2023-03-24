@@ -16,14 +16,19 @@
 #define BUFFER_SIZE 256
 #define PORT 8080
 
+typedef struct args {
+    int sock;
+    WINDOW *window_show;
+} ThreadArgs;
+
 void *receive_messages(void *arg);
-WINDOW *msgs_window;
 
 
 int main(int argc, char *argv[]) {
 
     int sock = 0;
     struct sockaddr_in serv_addr;
+    ThreadArgs *theArg = (ThreadArgs *)malloc(sizeof(ThreadArgs));
     char *user_id = NULL;
     char *server_name = NULL;
 
@@ -70,6 +75,7 @@ int main(int argc, char *argv[]) {
 
     /* Declaring the window */
     WINDOW *chat_window;
+    WINDOW *msgs_window;
 
     /* Starting the ncurses mode */
     initscr();
@@ -97,10 +103,12 @@ int main(int argc, char *argv[]) {
     chat_window = create_a_window(chat_height, chat_width, chat_starty, chat_startx);
     scrollok(chat_window, TRUE);
 
+    theArg->sock = sock;
+    theArg->window_show = msgs_window;
 
     // Start message receiving thread
     pthread_t receive_thread;
-    pthread_create(&receive_thread, NULL, receive_messages, &sock);
+    pthread_create(&receive_thread, NULL, receive_messages, (void *)theArg);
     pthread_detach(receive_thread);
 
     char message[MESSAGE_SIZE + 1];
@@ -147,10 +155,15 @@ int main(int argc, char *argv[]) {
 
 void *receive_messages(void *arg)
 {
-    int sock = *(int *)arg;
+    int sock = ((ThreadArgs *)arg)->sock;
     char buffer[BUFFER_SIZE +1];
+    int row = 0;
     ssize_t message_len;
-    char toPromp[MESSAGE_SIZE];
+
+    // Debug delete later
+    display_window(((ThreadArgs *)arg)->window_show, "I am printing correctly?", row, 0);
+    ++row;
+    // end debug delete later
 
     while ((message_len = recv(sock, buffer, MESSAGE_SIZE, 0)) > 0)
     {
@@ -158,10 +171,10 @@ void *receive_messages(void *arg)
 
         // Display received message
         //printf("%s", buffer);
-        strcat(toPromp, buffer);
+        display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
         fflush(stdout);
+        ++row;
     }
-    display_window(msgs_window, toPromp, 0, 0);
 
     return NULL;
 }
