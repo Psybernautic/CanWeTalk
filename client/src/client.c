@@ -42,17 +42,16 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    memset(&serv_addr, '0', sizeof(serv_addr));
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-
-
     // Create socket
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket");
         return 1;
     }
+
+    memset(&serv_addr, '0', sizeof(serv_addr));
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
 
     // Convert server name or IP address to binary form
     if (inet_pton(AF_INET, server_name, &serv_addr.sin_addr) <= 0) {
