@@ -7,6 +7,10 @@
 
 #include "../inc/winControl.h"
 
+#define DELETE_KEY 127
+#define SPACE_KEY 32
+
+
 WINDOW *create_a_window(int height, int width, int starty, int startx)
 {
 	WINDOW *theWindow;
@@ -34,37 +38,44 @@ void input_window(WINDOW *window, char *input, char *user)
 	memset(input, 0, sizeof(input));
 	wmove(window, 1, 1);
 
-	wprintw(window, "%s", user);
+	wprintw(window, "%5s", user);
 	wprintw(window, "%s", "> ");
 
-	for (i = 0; (ch = wgetch(window)) != '\n'; i++)
+	while ((ch = wgetch(window)) != '\n')
 	{
-		input[i] = ch;                       	/* '\n' not copied */
-		if (col++ < maxCol-2)               	/* if within window */
+		if (ch >= SPACE_KEY && ch <= DELETE_KEY)
 		{
-			wprintw(window, "%c", input[i]);      	/* display the char recv'd */
-		}
-		else                                	/* last char pos reached */
-		{
-			col = 1;
-			if (row == maxRow-2)              		/* last line in the window */
+			if (ch != DELETE_KEY)
 			{
-				scroll(window);                    	/* go up one line */
-				row = maxRow-2;                 	/* stay at the last line */
-				wmove(window, row, col);           	/* move cursor to the beginning */
-				wclrtoeol(window);                 	/* clear from cursor to eol */
-				box(window, 0, 0);                 	/* draw the box again */
-			} 
-			else
-			{
-				row++;
-				wmove(window, row, col);           /* move cursor to the beginning */
-				wrefresh(window);
-				wprintw(window, "%c", input[i]);    /* display the char recv'd */
+				input[i] = ch;								/* Storing the pressed key */
+				if (col++ < maxCol - 2)						/* if within window */
+				{
+					wprintw(window, "%c", input[i]);
+					++i;
+				}
+				else
+				{
+					col = 1;
+					if (row == maxRow - 2)
+					{
+						scroll(window);						/* go up one line */
+						row = maxRow-2;                 	/* stay at the last line */
+						wmove(window, row, col);           	/* move cursor to the beginning */
+						wclrtoeol(window);                 	/* clear from cursor to eol */
+						box(window, 0, 0);                 	/* draw the box again */
+					}
+					else
+					{
+						row++;
+						wmove(window, row, col);			/* move cursor to the beginning */
+						wrefresh(window);
+						wprintw(window, "%c", input[i]);	/* display the char recv'd */
+					}
+					++i;
+				}
 			}
 		}
 	}
-	
 }
 
 

@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
     initscr();
     cbreak();
     noecho();
+    keypad(stdscr, TRUE);
     refresh();
 
     int shouldBlank = 0;
@@ -145,7 +146,8 @@ int main(int argc, char *argv[]) {
         // clear input buffer
         memset(message, 0, sizeof(message));
     }
-
+    
+    free(theArg);
     close(sock);
     return 0;
     

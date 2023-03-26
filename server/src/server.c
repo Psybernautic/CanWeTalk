@@ -129,7 +129,7 @@ int main() {
 void *handle_client(void *arg) {
     client_info *client = (client_info *)arg;
     int socket_fd = client->socket_fd;
-    char buffer[BUFFER_SIZE];
+    char buffer[MESSAGE_SIZE];
     ssize_t message_len;
 
     // Read user ID
