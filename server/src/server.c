@@ -27,7 +27,8 @@ typedef struct {
 volatile sig_atomic_t server_running = 1;
 
 int client_count = 0;
-client_info clients[MAX_CLIENTS];
+client_info clients[MAX_CLIENTS] = {0};
+pthread_t thread_ids[MAX_CLIENTS] = {0};
 
 void *handle_client(void *arg);
 void send_to_all(char *message, int sender_socket_fd);
@@ -91,6 +92,7 @@ int main() {
             client_info *new_client = &clients[client_count++];
             new_client->socket_fd = new_socket;
             new_client->address = address;
+            new_client->user_id[0] = '\0';
 
             pthread_t thread_id;
             pthread_create(&thread_id, NULL, handle_client, new_client);
