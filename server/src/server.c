@@ -91,6 +91,7 @@ int main() {
             client_info *new_client = &clients[client_count++];
             new_client->socket_fd = new_socket;
             new_client->address = address;
+            new_client->user_id[0] = '\0';
 
             pthread_t thread_id;
             pthread_create(&thread_id, NULL, handle_client, new_client);
