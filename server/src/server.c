@@ -185,16 +185,11 @@ void send_to_all(char *message, int sender_socket_fd) {
         temp[len] = '\0';
         snprintf(formatted_message, MESSAGE_SIZE, "%-15s_[%5s]_ %c%c %-*.*s (%s)\n", ip_address, clients[client_index].user_id, direction, direction, MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp);
     
-    for (int i = 0; i < client_count; i++) {
-        if (clients[i].socket_fd != sender_socket_fd) 
-        {
-            send(clients[i].socket_fd, formatted_message, strlen(formatted_message), 0);
-        } 
-        else 
-        {
-            printf("%s", formatted_message);
+        for (int i = 0; i < client_count; i++) {
+            if (clients[i].socket_fd != sender_socket_fd) {
+                send(clients[i].socket_fd, formatted_message, strlen(formatted_message), 0);
+            }
         }
-}
         printf("%s", formatted_message);
         start = end;
         usleep(1000); // 1ms delay between sending parts
