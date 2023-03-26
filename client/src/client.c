@@ -17,7 +17,7 @@
 #define PORT 8080
 
 typedef struct args {
-    int sock;
+    int sock = 0;
     WINDOW *window_show;
 } ThreadArgs;
 
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&receive_thread, NULL, receive_messages, (void *)theArg);
     pthread_detach(receive_thread);
 
-    char message[MESSAGE_SIZE + 1];
+    char message[MESSAGE_SIZE + 1] = "";
  
 
     while (1) 
