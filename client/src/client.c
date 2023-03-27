@@ -15,6 +15,7 @@
 #define MESSAGE_SIZE 2000
 #define BUFFER_SIZE 256
 #define PORT 8080
+#define MAX_ROW 10
 
 typedef struct args {
     int sock;
@@ -168,11 +169,12 @@ void *receive_messages(void *arg)
         buffer[message_len] = '\0';
 
         // Display received message
-        //printf("%s", buffer);
+        if (row >= MAX_ROW) row = 0;
+
         display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
         fflush(stdout);
         ++row;
-    }
+}
 
     return NULL;
 }
