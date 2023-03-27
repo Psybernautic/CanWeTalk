@@ -12,15 +12,16 @@
 #include <signal.h>
 
 #define MAX_CLIENTS 10
-#define MESSAGE_SIZE 256
+#define MESSAGE_SIZE 79
 #define MAX_MESSAGE_LEN 40
-#define MESSAGE_FORMAT "[%s] %s: %c %.*s"
 #define BUFFER_SIZE 20
+#define USER_NAME_SIZE 6
+#define TIMESTAMP_SIZE 9
 #define PORT 8080
 
 typedef struct {
     int socket_fd;
-    char user_id[BUFFER_SIZE];
+    char user_id[USER_NAME_SIZE];
     struct sockaddr_in address;
 } client_info;
 
@@ -131,11 +132,13 @@ int main() {
 void *handle_client(void *arg) {
     client_info *client = (client_info *)arg;
     int socket_fd = client->socket_fd;
-    char buffer[MESSAGE_SIZE];
+    char bufferName[BUFFER_SIZE] = "";
+    char buffer[MESSAGE_SIZE] = "";
     ssize_t message_len;
 
     // Read user ID
-    read(socket_fd, client->user_id, sizeof(client->user_id) - 1);
+    read(socket_fd, bufferName, sizeof(bufferName));
+    strncpy(client->user_id, bufferName, USER_NAME_SIZE - 1);
     client->user_id[5] = '\0';
 
     while ((message_len = read(socket_fd, buffer, MESSAGE_SIZE)) > 0) {
@@ -160,11 +163,11 @@ void *handle_client(void *arg) {
 
 
 void send_to_all(char *message, int sender_socket_fd) {
-    char timestamp[20];
+    char timestamp[TIMESTAMP_SIZE] = "";
     time_t now = time(NULL);
     strftime(timestamp, sizeof(timestamp), "%H:%M:%S", localtime(&now));
 
-    char ip_address[16];
+    char ip_address[16] = "";
     inet_ntop(AF_INET, &(clients[find_client_index(sender_socket_fd)].address.sin_addr), ip_address, INET_ADDRSTRLEN);
 
     char direction_send = '>';
@@ -176,36 +179,58 @@ void send_to_all(char *message, int sender_socket_fd) {
     }
 
     int message_len = strlen(message);
-    char *formatted_message = malloc(MESSAGE_SIZE);
+    
     int start = 0;
 
     while (start < message_len) {
+        
         int end = start + MAX_MESSAGE_LEN;
         if (end > message_len) {
             end = message_len;
         }
+
         int len = end - start;
-        char temp[len + 1];
+        char temp[len];
+
         strncpy(temp, message + start, len);
         temp[len] = '\0';
-        snprintf(formatted_message, MESSAGE_SIZE, "%-15s_[%5s]_ %c%c %-*.*s (%s)\n", ip_address, clients[client_index].user_id, direction_send, direction_send, MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp);
 
-        for (int i = 0; i < client_count; i++) {
-            if (clients[i].socket_fd != sender_socket_fd) {
+        for (int i = 0; i < client_count; i++)
+        {    
+            if (clients[i].socket_fd != sender_socket_fd)
+            {
+                char *formatted_message = (char *)malloc(MESSAGE_SIZE * sizeof(char));
+                snprintf
+                (
+                    formatted_message, MESSAGE_SIZE, "%-15s [%-5s] %c%c %-*.*s (%s)",
+                    ip_address, clients[client_index].user_id, direction_send, direction_send,
+                    MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp
+                );
                 send(clients[i].socket_fd, formatted_message, strlen(formatted_message), 0);
-            } else {
-                char *sender_message = malloc(MESSAGE_SIZE);
-                snprintf(sender_message, MESSAGE_SIZE, "%-15s_[%5s]_ %c%c %-*.*s (%s)\n", ip_address, clients[client_index].user_id, direction_receive, direction_receive, MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp);
+                // Debug print
+                printf("[%-*.*s]\n", MESSAGE_SIZE-1, MESSAGE_SIZE-1, formatted_message);
+                // End debug print
+                free(formatted_message);
+            } 
+            else
+            {
+                char *sender_message = (char *)malloc(MESSAGE_SIZE * sizeof(char));
+                snprintf
+                (
+                    sender_message, MESSAGE_SIZE, "%-15s [%-5s] %c%c %-*.*s (%s)",
+                    ip_address, clients[client_index].user_id, direction_receive, direction_receive,
+                    MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp
+                );
                 send(sender_socket_fd, sender_message, strlen(sender_message), 0);
+                // Debug print
+                printf("[%-*.*s]\n", MESSAGE_SIZE-1, MESSAGE_SIZE-1, sender_message);
+                // End debug print
                 free(sender_message);
             }
         }
-        printf("%s", formatted_message);
         start = end;
         usleep(1000); // 1ms delay between sending parts
     }
-
-    free(formatted_message);
 }
 
 

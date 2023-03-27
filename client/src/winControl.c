@@ -9,6 +9,7 @@
 
 #define DELETE_KEY 127
 #define SPACE_KEY 32
+#define MAX_INPUT 80
 
 
 WINDOW *create_a_window(int height, int width, int starty, int startx)
@@ -38,12 +39,12 @@ void input_window(WINDOW *window, char *input, char *user)
 	memset(input, 0, sizeof(input));
 	wmove(window, 1, 1);
 
-	wprintw(window, "%5s", user);
+	wprintw(window, "%s", user);
 	wprintw(window, "%s", "> ");
 
 	while ((ch = wgetch(window)) != '\n')
 	{
-		if (ch >= SPACE_KEY && ch <= DELETE_KEY)
+		if (ch >= SPACE_KEY && ch <= DELETE_KEY && i < MAX_INPUT)
 		{
 			if (ch != DELETE_KEY)
 			{

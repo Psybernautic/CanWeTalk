@@ -14,6 +14,7 @@
 
 #define MESSAGE_SIZE 2000
 #define BUFFER_SIZE 256
+#define PREDEF_WIDTH 90
 #define PORT 8080
 #define MAX_ROW 10
 
@@ -97,11 +98,11 @@ int main(int argc, char *argv[]) {
     int msg_startx = 0;
     int msg_starty = 0;
 
-    /* create the input window */
+    /* create the window where all mesages will be displayed */
     msgs_window = create_a_window(msg_height, msg_width, msg_starty, msg_startx);
     scrollok(msgs_window, TRUE);
 
-    /* create the output window */
+    /* create the window where the message to send will be entered */
     chat_window = create_a_window(chat_height, chat_width, chat_starty, chat_startx);
     scrollok(chat_window, TRUE);
 
@@ -136,9 +137,6 @@ int main(int argc, char *argv[]) {
         if (strcmp(message, ">>bye<<") == 0) 
         {
             send(sock,message,strlen(message),0);
-            destroy_window(chat_window);
-            destroy_window(msgs_window);
-            endwin();
             break;
         }
 
@@ -148,6 +146,9 @@ int main(int argc, char *argv[]) {
         memset(message, 0, sizeof(message));
     }
     
+    destroy_window(chat_window);
+    destroy_window(msgs_window);
+    endwin();
     free(theArg);
     close(sock);
     return 0;
@@ -182,6 +183,8 @@ void *receive_messages(void *arg)
             fflush(stdout);
             ++row;
         }
+
+        usleep(2000);
         
     }
 
