@@ -163,9 +163,6 @@ void *receive_messages(void *arg)
     char buffer[BUFFER_SIZE +1];
     int row = 0;
     ssize_t message_len;
-    int maxrow = 0;
-    int maxcol = 0;
-    getmaxyx(((ThreadArgs *)arg)->window_show, maxrow, maxcol);
 
 
     while ((message_len = recv(sock, buffer, MESSAGE_SIZE, 0)) > 0)
@@ -174,19 +171,9 @@ void *receive_messages(void *arg)
 
         // Display received message
         //printf("%s", buffer);
-        if (row == (maxrow -1))
-        {
-            display_window(((ThreadArgs *)arg)->window_show, buffer, row, 1);
-            fflush(stdout);
-            row = 0;
-        }
-        else
-        {
-            display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
-            fflush(stdout);
-            ++row;
-        }
-        
+        display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
+        fflush(stdout);
+        ++row;
     }
 
     return NULL;
