@@ -162,10 +162,6 @@ void *receive_messages(void *arg)
     int row = 0;
     ssize_t message_len;
 
-    // Debug delete later
-    display_window(((ThreadArgs *)arg)->window_show, "I am printing correctly?", row, 0);
-    ++row;
-    // end debug delete later
 
     while ((message_len = recv(sock, buffer, MESSAGE_SIZE, 0)) > 0)
     {
