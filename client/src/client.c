@@ -169,14 +169,20 @@ void *receive_messages(void *arg)
         buffer[message_len] = '\0';
 
         // Display received message
-        display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
-        fflush(stdout);
-        ++row;
-
-        if (row > MAX_ROW) {
+        if (row >= MAX_ROW) {
             row = 0;
             clear_window(((ThreadArgs *)arg)->window_show);
+            display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
+            fflush(stdout);
+            ++row;
         }
+        else
+        {
+            display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
+            fflush(stdout);
+            ++row;
+        }
+        
     }
 
     return NULL;
