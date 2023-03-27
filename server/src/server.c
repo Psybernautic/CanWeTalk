@@ -151,7 +151,7 @@ void *handle_client(void *arg) {
         }
 
         send_to_all(buffer, socket_fd);
-         usleep(1000);
+        usleep(2000);
         printf("message sent to all clients\n");
     }
 
