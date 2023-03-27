@@ -10,13 +10,13 @@
 # =======================================================
 # FINAL BINARY Target
 .bin/server : ./obj/server.o 
-	  cc       ./obj/server.o -lpthread -o  ./bin/server
+	cc ./obj/server.o -lpthread -o  ./bin/chat-server
 #
 # =======================================================
 #                     Dependencies
 # =======================================================
 ./obj/server.o : 
-	  cc -c        ./src/server.c -o    ./obj/server.o
+	cc -c ./src/server.c -o ./obj/server.o
 	      
   
 #

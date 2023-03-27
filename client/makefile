@@ -1,6 +1,6 @@
 
 ./bin/client: ./obj/client.o ./obj/winControl.o
-	cc ./obj/client.o ./obj/winControl.o -lpthread -lncurses -o ./bin/client
+	cc ./obj/client.o ./obj/winControl.o -lpthread -lncurses -o ./bin/chat-client
 
 ./obj/client.o: ./src/client.c ./inc/winControl.h
 	cc -c -ggdb ./src/client.c -o ./obj/client.o
