@@ -12,7 +12,7 @@
 
 #include "../inc/winControl.h"
 
-#define MESSAGE_SIZE 2000
+#define MESSAGE_SIZE 79
 #define BUFFER_SIZE 256
 #define PREDEF_WIDTH 90
 #define PORT 8080
@@ -137,6 +137,7 @@ int main(int argc, char *argv[]) {
         if (strcmp(message, ">>bye<<") == 0) 
         {
             send(sock,message,strlen(message),0);
+
             break;
         }
 
@@ -160,7 +161,7 @@ int main(int argc, char *argv[]) {
 void *receive_messages(void *arg)
 {
     int sock = ((ThreadArgs *)arg)->sock;
-    char buffer[BUFFER_SIZE +1];
+    char buffer[MESSAGE_SIZE +1];
     int row = 0;
     ssize_t message_len;
 

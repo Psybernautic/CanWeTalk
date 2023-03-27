@@ -39,12 +39,11 @@ void input_window(WINDOW *window, char *input, char *user)
 	memset(input, 0, sizeof(input));
 	wmove(window, 1, 1);
 
-	wprintw(window, "%s", user);
 	wprintw(window, "%s", "> ");
 
 	while ((ch = wgetch(window)) != '\n')
 	{
-		if (ch >= SPACE_KEY && ch <= DELETE_KEY && i < MAX_INPUT)
+		if (ch >= SPACE_KEY && ch <= DELETE_KEY && i < MAX_INPUT - 1)
 		{
 			if (ch != DELETE_KEY)
 			{
@@ -75,6 +74,19 @@ void input_window(WINDOW *window, char *input, char *user)
 					++i;
 				}
 			}
+			if (ch == DELETE_KEY && i > 0)
+			{
+				input[i - 1] = '\0';
+				--i;
+				col = 1;
+				wmove(window, row, col);
+				wclrtoeol(window);
+				wrefresh(window);
+				wprintw(window, "%s", "> ");
+				wprintw(window, "%s", input);
+
+			}
+			
 		}
 	}
 }
