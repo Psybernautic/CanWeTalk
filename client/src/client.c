@@ -35,10 +35,10 @@ int main(int argc, char *argv[]) {
 
     // Parse command line arguments
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-user") == 0 && i + 1 < argc) {
-            user_id = argv[++i];
-        } else if (strcmp(argv[i], "-server") == 0 && i + 1 < argc) {
-            server_name = argv[++i];
+        if (strncmp(argv[i], "-user", 5) == 0) {
+            user_id = argv[i] + 5;
+        } else if (strncmp(argv[i], "-server", 7) == 0) {
+            server_name = argv[i] + 7;
         }
     }
     
