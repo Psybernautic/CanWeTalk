@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
         }
 
         send(sock, message, strlen(message), 0);
-
+        usleep(2000);
         // clear input buffer
         memset(message, 0, sizeof(message));
     }
