@@ -175,7 +175,7 @@ void *receive_messages(void *arg)
 
         if (row >= MAX_ROW) {
             row = 0;
-            wclear(((ThreadArgs *)arg)->window_show);
+            clear_window(((ThreadArgs *)arg)->window_show);
         }
     }
 
