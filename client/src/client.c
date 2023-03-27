@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
     int shouldBlank = 0;
 
-    int chat_height = 5;
+    int chat_height = 10;
     int chat_width  = COLS - 2;
     int chat_startx = 1;
     int chat_starty = LINES - chat_height;
@@ -98,6 +98,8 @@ int main(int argc, char *argv[]) {
 
     /* create the input window */
     msgs_window = create_a_window(msg_height, msg_width, msg_starty, msg_startx);
+    idlok(msgs_window, TRUE);
+    idcok(msgs_window, TRUE);
     scrollok(msgs_window, TRUE);
 
     /* create the output window */
