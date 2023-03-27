@@ -173,7 +173,7 @@ void *receive_messages(void *arg)
         fflush(stdout);
         ++row;
 
-        if (row >= MAX_ROW) {
+        if (row > MAX_ROW) {
             row = 0;
             clear_window(((ThreadArgs *)arg)->window_show);
         }
