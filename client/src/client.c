@@ -17,7 +17,7 @@
 #define PORT 8080
 
 typedef struct args {
-    int sock = 0;
+    int sock;
     WINDOW *window_show;
 } ThreadArgs;
 
