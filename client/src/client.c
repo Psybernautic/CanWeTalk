@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
     initscr();
     cbreak();
     noecho();
-    keypad(stdscr, TRUE);
     refresh();
 
     int shouldBlank = 0;
@@ -119,11 +118,6 @@ int main(int argc, char *argv[]) {
 
     while (1) 
     {
-        /*
-        printf("%s> ", user_id);
-        fflush(stdout);
-        fgets(message, MESSAGE_SIZE, stdin);
-        */
         // Replace new line character with null terminator
         input_window(chat_window, message, user_id);
 
@@ -161,32 +155,37 @@ int main(int argc, char *argv[]) {
 void *receive_messages(void *arg)
 {
     int sock = ((ThreadArgs *)arg)->sock;
-    char buffer[MESSAGE_SIZE +1];
+    char buffer[MESSAGE_SIZE +1] = "";
     int row = 0;
     ssize_t message_len;
 
-
-    while ((message_len = recv(sock, buffer, MESSAGE_SIZE, 0)) > 0)
+    while (1)
     {
-        buffer[message_len] = '\0';
-
-        // Display received message
-        if (row >= MAX_ROW) {
-            row = 0;
-            clear_window(((ThreadArgs *)arg)->window_show);
-            display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
-            fflush(stdout);
-            ++row;
+        if (recv(sock, buffer, MESSAGE_SIZE, 0) <= 0)
+        {
+            break;
         }
         else
         {
-            display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
-            fflush(stdout);
-            ++row;
-        }
+            buffer[strlen(buffer) + 1] = '\0';
 
-        usleep(2000);
-        
+            // Display received message
+            if (row >= MAX_ROW) {
+                row = 0;
+                display_window(((ThreadArgs *)arg)->window_show, buffer, row, 1);
+                //fflush(stdout);
+                ++row;
+            }
+            else
+            {
+                display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
+                //fflush(stdout);
+                ++row;
+            }
+
+            memset(buffer, 0, sizeof(buffer));
+            usleep(2000);
+        }
     }
 
     return NULL;

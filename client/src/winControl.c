@@ -45,7 +45,7 @@ void input_window(WINDOW *window, char *input, char *user)
 	{
 		if (ch >= SPACE_KEY && ch <= DELETE_KEY && i < MAX_INPUT - 1)
 		{
-			if (ch != DELETE_KEY)
+			if (ch != DELETE_KEY && ch != KEY_BACKSPACE && ch != '\b')
 			{
 				input[i] = ch;								/* Storing the pressed key */
 				if (col++ < maxCol - 2)						/* if within window */
@@ -95,7 +95,8 @@ void input_window(WINDOW *window, char *input, char *user)
 
 void display_window(WINDOW *window, char *input, int theRow, int isItBlank)
 {
-	if(isItBlank == 1) clear_window(window);		/* make it a clear window */
+	if(isItBlank == 1) { clear_window(window); }		/* make it a clear window */
+
 	wmove(window, (theRow + 1), 1);					/* position cusor at approp row */
 	wprintw(window, "%s", input);
 	wrefresh(window);
@@ -113,11 +114,10 @@ void destroy_window(WINDOW *window)
 void clear_window(WINDOW *window)
 {
 	int i = 0;
-	int maxrow = 0;
-	int maxcol = 0;
+	int maxrow, maxcol;
 		
 	getmaxyx(window, maxrow, maxcol);
-	for (i = 1; i < maxcol-2; i++)  
+	for (i = 1; i < maxrow-2; i++)  
 	{
 		wmove(window, i, 1);
 		refresh();
