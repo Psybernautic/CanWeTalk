@@ -187,11 +187,31 @@ void send_to_all(char *message, int sender_socket_fd) {
     while (start < message_len) {
         
         int end = start + MAX_MESSAGE_LEN;
-        if (end > message_len) {
+        if (end > message_len)
+        {
             end = message_len;
         }
 
         int len = end - start;
+        
+        // Checking if we are in a space character just where we are cutting
+        // the message
+        if (end != message_len && message[len -1] != ' ' 
+            && message[len] != ' ')
+        {
+            int index = len - 1;
+            while (index >= 0)
+            {
+                if (message[index] == ' ')
+                {
+                    len = index + 1;
+                    end = len + start;
+                    break;
+                }
+                --index;
+            }
+        }
+        
         char temp[len];
 
         strncpy(temp, message + start, len);
