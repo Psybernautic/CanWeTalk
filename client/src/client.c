@@ -170,15 +170,36 @@ void *receive_messages(void *arg)
         {
             buffer[strlen(buffer) + 1] = '\0';
 
-            // Display received message
-            if (row >= MAX_ROW) {
-                row = 0;
-                display_window(((ThreadArgs *)arg)->window_show, buffer, row, 1);
-                fflush(stdout);
-                ++row;
+            // Display received messages
+            if (row >= MAX_ROW)
+            {
+                if (buffer[67] == '&')
+                {
+                    buffer[67] = ' ';
+                    display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
+                    fflush(stdout);
+                    ++row;
+                }
+                else
+                {
+                    row = 0;
+                    buffer[67] = ' ';
+                    display_window(((ThreadArgs *)arg)->window_show, buffer, row, 1);
+                    fflush(stdout);
+                    ++row;
+                }
             }
             else
             {
+                // Figuring out if this is a partial message
+                if (buffer[67] == '&')
+                {
+                    /* We know now, but there is nothing
+                    to do in this section of client actions */
+                    buffer[67] = ' ';
+                }
+                
+
                 display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
                 fflush(stdout);
                 ++row;

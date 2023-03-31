@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -173,6 +174,7 @@ void send_to_all(char *message, int sender_socket_fd) {
 
     char direction_send = '>';
     char direction_receive = '<';
+    bool sectioned = false;
     int client_index = find_client_index(sender_socket_fd);
     if (client_index >= 0) {
         direction_send = '<';
@@ -180,7 +182,13 @@ void send_to_all(char *message, int sender_socket_fd) {
     }
 
     int message_len = strlen(message);
-    printf("Received: %d characters\n", message_len);
+
+    // Checking if this message will be divided
+    // into two messages
+    if (message_len > MAX_MESSAGE_LEN)
+    {
+        sectioned = true;
+    }
     
     int start = 0;
 
@@ -228,6 +236,14 @@ void send_to_all(char *message, int sender_socket_fd) {
                     ip_address, clients[client_index].user_id, direction_send, direction_send,
                     MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp
                 );
+
+                // Lettimng the client know this is a partial message
+                if (sectioned)
+                {
+                    formatted_message[67] = '&';
+                }
+
+                // Sending the message to client
                 send(clients[i].socket_fd, formatted_message, strlen(formatted_message), 0);
                 // Debug print
                 printf("[%-*.*s]\n", MESSAGE_SIZE-1, MESSAGE_SIZE-1, formatted_message);
@@ -243,6 +259,14 @@ void send_to_all(char *message, int sender_socket_fd) {
                     ip_address, clients[client_index].user_id, direction_receive, direction_receive,
                     MAX_MESSAGE_LEN, MAX_MESSAGE_LEN, temp, timestamp
                 );
+
+                // Letting the client know this is a partial message
+                if (sectioned)
+                {
+                    sender_message[67] = '&';
+                }
+
+                // Sending the message to client
                 send(sender_socket_fd, sender_message, strlen(sender_message), 0);
                 // Debug print
                 printf("[%-*.*s]\n", MESSAGE_SIZE-1, MESSAGE_SIZE-1, sender_message);
