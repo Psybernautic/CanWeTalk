@@ -16,7 +16,7 @@
 #                     Dependencies
 # =======================================================
 ./obj/server.o : 
-	cc -c ./src/server.c -o ./obj/server.o
+	cc -c -ggdb ./src/server.c -o ./obj/server.o
 	      
   
 #

@@ -43,7 +43,7 @@ void input_window(WINDOW *window, char *input, char *user)
 
 	while ((ch = wgetch(window)) != '\n')
 	{
-		if (ch >= SPACE_KEY && ch <= DELETE_KEY && i < MAX_INPUT - 1)
+		if (ch >= SPACE_KEY && ch <= DELETE_KEY && i < MAX_INPUT)
 		{
 			if (ch != DELETE_KEY && ch != KEY_BACKSPACE && ch != '\b')
 			{

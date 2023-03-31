@@ -13,6 +13,7 @@
 
 #define MAX_CLIENTS 10
 #define MESSAGE_SIZE 79
+#define INCOMING_MSG_SIZE 80
 #define MAX_MESSAGE_LEN 40
 #define BUFFER_SIZE 20
 #define USER_NAME_SIZE 6
@@ -133,7 +134,7 @@ void *handle_client(void *arg) {
     client_info *client = (client_info *)arg;
     int socket_fd = client->socket_fd;
     char bufferName[BUFFER_SIZE] = "";
-    char buffer[MESSAGE_SIZE] = "";
+    char buffer[INCOMING_MSG_SIZE + 1] = "";
     ssize_t message_len;
 
     // Read user ID
@@ -141,7 +142,7 @@ void *handle_client(void *arg) {
     strncpy(client->user_id, bufferName, USER_NAME_SIZE - 1);
     client->user_id[5] = '\0';
 
-    while ((message_len = read(socket_fd, buffer, MESSAGE_SIZE)) > 0) {
+    while ((message_len = read(socket_fd, buffer, INCOMING_MSG_SIZE)) > 0) {
         buffer[message_len] = '\0';
 
         // Check for exit message
@@ -150,7 +151,7 @@ void *handle_client(void *arg) {
             printf("Client %s disconnected: %s\n", client->user_id, inet_ntoa(client->address.sin_addr));
             close(socket_fd);
             client_count--;
-            return NULL;
+            return NULL;    
         }
 
         send_to_all(buffer, socket_fd);
@@ -179,6 +180,7 @@ void send_to_all(char *message, int sender_socket_fd) {
     }
 
     int message_len = strlen(message);
+    printf("Received: %d characters\n", message_len);
     
     int start = 0;
 

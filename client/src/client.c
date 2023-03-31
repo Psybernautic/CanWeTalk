@@ -13,6 +13,7 @@
 #include "../inc/winControl.h"
 
 #define MESSAGE_SIZE 79
+#define MAX_OUT_MSG_SIZE 80
 #define BUFFER_SIZE 256
 #define PREDEF_WIDTH 90
 #define PORT 8080
@@ -113,7 +114,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&receive_thread, NULL, receive_messages, (void *)theArg);
     pthread_detach(receive_thread);
 
-    char message[MESSAGE_SIZE + 1] = "";
+    char message[MAX_OUT_MSG_SIZE + 1] = "";
  
 
     while (1) 
