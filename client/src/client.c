@@ -168,12 +168,10 @@ void *receive_messages(void *arg)
         }
         else
         {
-            buffer[strlen(buffer) + 1] = '\0';
-
             // Display received messages
             if (row >= MAX_ROW)
             {
-                if (buffer[67] == '&')
+                if (buffer[67] == '&' && buffer[26] != '&')
                 {
                     buffer[67] = ' ';
                     display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
@@ -184,6 +182,7 @@ void *receive_messages(void *arg)
                 {
                     row = 0;
                     buffer[67] = ' ';
+                    buffer[26] = ' ';
                     display_window(((ThreadArgs *)arg)->window_show, buffer, row, 1);
                     fflush(stdout);
                     ++row;
@@ -197,6 +196,11 @@ void *receive_messages(void *arg)
                     /* We know now, but there is nothing
                     to do in this section of client actions */
                     buffer[67] = ' ';
+                    
+                    if (buffer[26] == '&')
+                    {
+                        buffer[26] = ' ';
+                    }
                 }
                 
 

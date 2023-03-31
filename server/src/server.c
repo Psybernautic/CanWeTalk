@@ -175,6 +175,7 @@ void send_to_all(char *message, int sender_socket_fd) {
     char direction_send = '>';
     char direction_receive = '<';
     bool sectioned = false;
+    bool first_msg = true;
     int client_index = find_client_index(sender_socket_fd);
     if (client_index >= 0) {
         direction_send = '<';
@@ -241,6 +242,12 @@ void send_to_all(char *message, int sender_socket_fd) {
                 if (sectioned)
                 {
                     formatted_message[67] = '&';
+                    
+                    if (first_msg)
+                    {
+                        formatted_message[26] = '&';
+                        first_msg = false;
+                    }
                 }
 
                 // Sending the message to client
@@ -264,6 +271,12 @@ void send_to_all(char *message, int sender_socket_fd) {
                 if (sectioned)
                 {
                     sender_message[67] = '&';
+
+                    if (first_msg)
+                    {
+                        sender_message[26] = '&';
+                        first_msg = false;
+                    }
                 }
 
                 // Sending the message to client
