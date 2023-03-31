@@ -174,13 +174,13 @@ void *receive_messages(void *arg)
             if (row >= MAX_ROW) {
                 row = 0;
                 display_window(((ThreadArgs *)arg)->window_show, buffer, row, 1);
-                //fflush(stdout);
+                fflush(stdout);
                 ++row;
             }
             else
             {
                 display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
-                //fflush(stdout);
+                fflush(stdout);
                 ++row;
             }
 
