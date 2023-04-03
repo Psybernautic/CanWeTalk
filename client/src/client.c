@@ -1,30 +1,16 @@
-#include <arpa/inet.h>
-#include <errno.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
+/*
+FILE                : client.c
+PROJECT             : Can We Talk?
+PROGRAMMER          : Sebastian Posada, Angel Aviles, Jonathon Gregoric
+FIRST VERSION       : 2023-03-20
+DESCRIPTION         : This file contains the main entry point
+                    of the client side application of the chat server.
+*/
+
 
 #include "../inc/winControl.h"
+#include "../inc/client.h"
 
-#define MESSAGE_SIZE 79
-#define MAX_OUT_MSG_SIZE 80
-#define BUFFER_SIZE 256
-#define PREDEF_WIDTH 90
-#define PORT 8080
-#define MAX_ROW 10
-
-typedef struct args {
-    int sock;
-    WINDOW *window_show;
-} ThreadArgs;
-
-void *receive_messages(void *arg);
 
 
 int main(int argc, char *argv[]) {
@@ -149,70 +135,4 @@ int main(int argc, char *argv[]) {
     close(sock);
     return 0;
     
-}
-
-
-
-void *receive_messages(void *arg)
-{
-    int sock = ((ThreadArgs *)arg)->sock;
-    char buffer[MESSAGE_SIZE +1] = "";
-    int row = 0;
-    ssize_t message_len;
-
-    while (1)
-    {
-        if (recv(sock, buffer, MESSAGE_SIZE, 0) <= 0)
-        {
-            break;
-        }
-        else
-        {
-            // Display received messages
-            if (row >= MAX_ROW)
-            {
-                if (buffer[67] == '&' && buffer[26] != '&')
-                {
-                    buffer[67] = ' ';
-                    display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
-                    fflush(stdout);
-                    ++row;
-                }
-                else
-                {
-                    row = 0;
-                    buffer[67] = ' ';
-                    buffer[26] = ' ';
-                    display_window(((ThreadArgs *)arg)->window_show, buffer, row, 1);
-                    fflush(stdout);
-                    ++row;
-                }
-            }
-            else
-            {
-                // Figuring out if this is a partial message
-                if (buffer[67] == '&')
-                {
-                    /* We know now, but there is nothing
-                    to do in this section of client actions */
-                    buffer[67] = ' ';
-                    
-                    if (buffer[26] == '&')
-                    {
-                        buffer[26] = ' ';
-                    }
-                }
-                
-
-                display_window(((ThreadArgs *)arg)->window_show, buffer, row, 0);
-                fflush(stdout);
-                ++row;
-            }
-
-            memset(buffer, 0, sizeof(buffer));
-            usleep(2000);
-        }
-    }
-
-    return NULL;
 }

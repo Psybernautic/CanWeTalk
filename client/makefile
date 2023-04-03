@@ -12,14 +12,14 @@
 #						Client
 # =======================================================
 # FINAL BINARY Target
-./bin/client: ./obj/client.o ./obj/winControl.o
+./bin/client: ./obj/client.o ./obj/winControl.o 
 	cc ./obj/client.o ./obj/winControl.o -lpthread -lncurses -o ./bin/chat-client
 
 #
 # =======================================================
 #                     Dependencies
 # =======================================================
-./obj/client.o: ./src/client.c ./inc/winControl.h
+./obj/client.o: ./src/client.c ./inc/winControl.h ./inc/client.h
 	cc -c ./src/client.c -o ./obj/client.o
 
 ./obj/winControl.o: ./src/winControl.c ./inc/winControl.h
