@@ -1,9 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
+/*
+FILE                : winControl.c
+PROJECT             : Can We Talk?
+PROGRAMMER          : Sebastian Posada, Angel Aviles, Jonathon Gregoric
+FIRST VERSION       : 2023-03-20
+DESCRIPTION         : This file contains the function definitions used for the
+					displays creation and management by the use of ncurses
+*/
 
 #include "../inc/winControl.h"
 
@@ -12,6 +14,21 @@
 #define MAX_INPUT 80
 
 
+
+//
+// FUNCTION     : create_a_window
+// DESCRIPTION  :
+//  This function will create the a window according to the specified
+//	inputs from the arguments
+//
+// PARAMETERS
+//  int height	:	The height of the screen
+//	int width	:	The width of the screen
+//	int starty	:	The y coordinate from the starting position from cursor
+//	int startx	:	The x coordinate from the starting position from cursor
+//                      
+//
+// RETURNS      :   WINDOW
 WINDOW *create_a_window(int height, int width, int starty, int startx)
 {
 	WINDOW *theWindow;
@@ -25,6 +42,21 @@ WINDOW *create_a_window(int height, int width, int starty, int startx)
 
 
 
+//
+// FUNCTION     : input_window
+// DESCRIPTION  :
+//  This function will manage the user input character per character from stdin.
+//	It will receive stdin in order to receive and write a message into a buffer.
+//	It will limit the max number of characters to 80 per input
+//
+// PARAMETERS
+//  WINDOW *window	:	This is the pointer to the window that will serve as the
+//						input entry of the stdin
+//	char *input		:	This will be the buffer in which the stdin will be written to
+//	char *user		:	This will be the name of the user running the client instance
+//                      
+//
+// RETURNS			:	Void
 void input_window(WINDOW *window, char *input, char *user)
 {
 	int i = 0;			// For a loop counter
@@ -93,6 +125,23 @@ void input_window(WINDOW *window, char *input, char *user)
 
 
 
+//
+// FUNCTION     : display_window
+// DESCRIPTION  :
+//  This function will manage the display window in which the messages sent or received
+//	during the instance duration of the client. It will process and print line by line
+//	as the messages are received by this function.
+//
+// PARAMETERS
+//  WINDOW *window	:	This is the pointer to the window that will serve as the
+//						prompt screen of the messages that have been received or sent.
+//	char *input		:	This will be the buffer that contains the message to be prompt
+//	int theRow		:	This will line number in which the message will be written
+//	int isItBlank	:	This will indicate if the screen will be cleaned before printing
+//						the message or not, 0 for leaving as is, 1 to clean the screen
+//                      
+//
+// RETURNS			:	Void
 void display_window(WINDOW *window, char *input, int theRow, int isItBlank)
 {
 	if(isItBlank == 1) { clear_window(window); }		/* make it a clear window */
@@ -104,6 +153,16 @@ void display_window(WINDOW *window, char *input, int theRow, int isItBlank)
 
 
 
+//
+// FUNCTION     : destroy_window
+// DESCRIPTION  :
+//  This function will terminate the window
+//
+// PARAMETERS
+//  WINDOW *window	:	This is the pointer to the window that will be destroyed.
+//                      
+//
+// RETURNS			:	Void
 void destroy_window(WINDOW *window)
 {
 	delwin(window);
@@ -111,6 +170,16 @@ void destroy_window(WINDOW *window)
 
 
 
+//
+// FUNCTION     : clear_window
+// DESCRIPTION  :
+//  This function will clear the specified window line by line
+//
+// PARAMETERS
+//  WINDOW *window	:	This is the pointer to the window that will cleaned from any content.
+//                      
+//
+// RETURNS			:	Void
 void clear_window(WINDOW *window)
 {
 	int i = 0;

@@ -1,3 +1,14 @@
+/*
+FILE                : clientHandler.h
+PROJECT             : Can We Talk?
+PROGRAMMER          : Sebastian Posada, Angel Aviles, Jonathon Gregoric
+FIRST VERSION       : 2023-03-20
+DESCRIPTION         : This file contains the prototypes of the fucntions used
+                    in the server source code for processing messages
+                    from different clients and direct the messages
+                    across a the chat system
+*/
+
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>

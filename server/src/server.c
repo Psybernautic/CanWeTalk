@@ -1,3 +1,11 @@
+/*
+FILE                : server.c
+PROJECT             : Can We Talk?
+PROGRAMMER          : Sebastian Posada, Angel Aviles, Jonathon Gregoric
+FIRST VERSION       : 2023-03-20
+DESCRIPTION         : This file contains the main entry point
+                    of the server side application of the chat server.
+*/
 
 #include "../inc/clientHandler.h"
 
@@ -39,7 +47,7 @@ int main()
     pthread_t thread_ids[MAX_CLIENTS];
     int thread_count = 0;
 
-    printf("Server started. Waiting for clients...\n");
+    //printf("Server started. Waiting for clients...\n");
 
     while (server_running) {
         if (client_count < MAX_CLIENTS) {
@@ -65,7 +73,7 @@ int main()
             pthread_create(&thread_id, NULL, handle_client, new_client);
             pthread_detach(thread_id);
 
-            printf("Client connected: %s\n", inet_ntoa(new_client->address.sin_addr));
+            //printf("Client connected: %s\n", inet_ntoa(new_client->address.sin_addr));
             
             thread_ids[thread_count++] = thread_id;
         }
